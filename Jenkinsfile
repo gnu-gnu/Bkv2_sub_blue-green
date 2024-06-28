@@ -52,6 +52,7 @@ pipeline {
             echo "deploy new deployment"
             kustomize edit add label deploy:$tag -f
             kustomize edit set namesuffix -- -$tag
+            kustomize edit set namespace default
             kustomize edit set image 192.168.1.10:8443/library/dashboard:$tag
             kustomize build . | kubectl apply -f -
             echo "retrieve new deployment"
