@@ -72,18 +72,20 @@ pipeline {
             do
               export replicas=$(kubectl get deployments \
               --selector=app=dashboard,deploy=$tag \
-              -o jsonpath --template="{.items[0].status.replicas}")
+              -o jsonpath --template="{.items[0].status.replicas}" \
+              -n default)
               export ready=$(kubectl get deployments \
               --selector=app=dashboard,deploy=$tag \
-              -o jsonpath --template="{.items[0].status.readyReplicas}")
+              -o jsonpath --template="{.items[0].status.readyReplicas}" \
+              -n default)
               echo "total replicas: $replicas, ready replicas: $ready"
               if [ "$ready" -eq "$replicas" ]; then
                 echo "tag change and build deployment file by kustomize" 
                 kustomize edit add label deploy:$tag -f
                 kustomize build . | kubectl apply -f -
                 echo "delete $tag deployment"
-                kubectl delete deployment --selector=app=dashboard,deploy!=$tag
-                kubectl get deployments -o wide
+                kubectl delete deployment --selector=app=dashboard,deploy!=$tag -n default
+                kubectl get deployments -o wide -n default
                 break
               else
                 sleep 1
