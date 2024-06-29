@@ -68,6 +68,7 @@ pipeline {
           dir('service'){
             sh '''
             kustomize create --resources ./lb.yaml
+            kustomize edit set namespace default
             while true;
             do
               export replicas=$(kubectl get deployments \
