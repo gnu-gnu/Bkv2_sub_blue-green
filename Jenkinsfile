@@ -48,7 +48,7 @@ pipeline {
         container('kustomize'){
           dir('deployment'){
             sh '''
-            export
+            env
             '''
           }
         }
